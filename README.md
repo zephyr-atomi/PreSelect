@@ -4,15 +4,18 @@
 <br>
 </p>
 
-
+## 🌟Introduction
 <p align="center" width="100%">
 <img src="figures/framework.png" style="width: 100%; min-width: 300px; display: block; margin: auto;">
 </p>
+Language model pretraining involves training on extensive corpora, where data quality plays a pivotal role. In this work, we aim to directly estimate the contribution of data during pretraining and select pretraining data in an efficient manner. 
+Specifically, we draw inspiration from recent findings showing that compression efficiency (i.e., the normalized loss) of diverse models on certain text correlates strongly with their downstream performance, when the text domain aligns with the downstream benchmark. Building on this observation, we hypothesize that *data on which model losses are predictive of downstream abilities also contribute effectively to learning*.
+To leverage this insight, we introduce data selection based on data's Predictive strength (PreSelect), a lightweight and efficient data selection method that requires training and deploying only a fastText-based scorer. Through comprehensive experiments with 1B and 3B parameter models, we demonstrate that PreSelect trained on 30B tokens surpasses the performance of a vanilla baseline trained on 300B tokens, achieving a 10x reduction in compute requirements. Furthermore, PreSelect significantly outperforms other competitive data selection baselines, such as DCLM and FineWeb-Edu.
 
 ## Table of content
 - [Predictive Data Selection: The Data That Predicts Is the Data That Teaches](#predictive-data-selection-the-data-that-predicts-is-the-data-that-teaches)
+  - [🌟Introduction](#introduction)
   - [Table of content](#table-of-content)
-  - [Introduction](#introduction)
   - [📦Released Resources](#released-resources)
   - [Environment Setup](#environment-setup)
   - [🛠Filtering](#filtering)
@@ -25,10 +28,7 @@
   - [🤝 Acknowledgement](#-acknowledgement)
 
 
-## Introduction
-Language model pretraining involves training on extensive corpora, where data quality plays a pivotal role. In this work, we aim to directly estimate the contribution of data during pretraining and select pretraining data in an efficient manner. 
-Specifically, we draw inspiration from recent findings showing that compression efficiency (i.e., the normalized loss) of diverse models on certain text correlates strongly with their downstream performance, when the text domain aligns with the downstream benchmark. Building on this observation, we hypothesize that *data on which model losses are predictive of downstream abilities also contribute effectively to learning*.
-To leverage this insight, we introduce data selection based on data's Predictive strength (PreSelect), a lightweight and efficient data selection method that requires training and deploying only a fastText-based scorer. Through comprehensive experiments with 1B and 3B parameter models, we demonstrate that PreSelect trained on 30B tokens surpasses the performance of a vanilla baseline trained on 300B tokens, achieving a 10x reduction in compute requirements. Furthermore, PreSelect significantly outperforms other competitive data selection baselines, such as DCLM and FineWeb-Edu.
+
 
 
 ## 📦Released Resources
