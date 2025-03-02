@@ -19,9 +19,11 @@ To leverage this insight, we introduce data selection based on data's Predictive
   - [📦Released Resources](#released-resources)
   - [Environment Setup](#environment-setup)
   - [🛠Filtering](#filtering)
-    - [Step 1: BPC Calculation for a subset](#step-1-bpc-calculation-for-a-subset)
-    - [Step 2: Train Fasttext](#step-2-train-fasttext)
-    - [Step 3: Filtering](#step-3-filtering)
+    - [Direct Use](#direct-use)
+    - [Train own FastText](#train-own-fasttext)
+      - [Step 1: BPC Calculation for a subset](#step-1-bpc-calculation-for-a-subset)
+      - [Step 2: Train Fasttext](#step-2-train-fasttext)
+      - [Step 3: Filtering](#step-3-filtering)
   - [🛠Training](#training)
   - [🔍Evaluation](#evaluation)
   - [🖊️Citation](#️citation)
@@ -57,7 +59,39 @@ You can also prepare your own data.
 
 ## 🛠Filtering
 
-### Step 1: BPC Calculation for a subset
+### Direct Use
+If you want to directly use our trained fasttext, you can download it from huggingface and run the following code:
+```python
+import os
+import argparse
+
+from pathlib import Path
+
+parser = argparse.ArgumentParser("Filter")
+parser.add_argument("--input_path",type=str, help="input path name")
+parser.add_argument("--output_path",type=str, help="output path name")
+
+args = parser.parse_args()
+from datatrove.executor import LocalPipelineExecutor
+from datatrove.pipeline.filters import FastTextClassifierFilter
+from datatrove.pipeline.readers import ParquetReader,JsonlReader
+from datatrove.pipeline.writers.jsonl import JsonlWriter
+Path(f"{args.output_path}").mkdir(parents=True,exist_ok=True)
+
+dist_executor = LocalPipelineExecutor(
+    skip_completed=True,
+    pipeline=[
+        JsonlReader(f"{args.input_path}", text_key="text", default_metadata= {}),
+        FastTextClassifierFilter(f"PreSelect-classifier.bin", keep_labels=[("1",0.5)]), 
+        JsonlWriter(f"{args.output_path}", compression=None)
+    ],
+    tasks=100,
+)
+dist_executor.run()
+```
+
+### Train own FastText
+#### Step 1: BPC Calculation for a subset
 The first step is to pick a small subset and calculate the bpc for each example for each model.
 ```bash
 cd data_processing/bpc
@@ -68,17 +102,18 @@ python -u main.py\
     --batch_size 1\
 ```
 
-### Step 2: Train Fasttext
+#### Step 2: Train Fasttext
 Then you can train the fasttext using the data computed in Step 1.
 ```bash
 cd data_processing/fasttext
 python train_fasttext.py
 ```
-### Step 3: Filtering
+#### Step 3: Filtering
 Finally, you can filter your large corpus using the fasttext. The provided script works on one cpu machine, but it can be easily extend to multi machine filtering.
 ```bash
 bash pipelie.sh {FASTTEXT_NAME} filter NO NO NO NO 0 NO 1 0.1
 ```
+
 
 
 ## 🛠Training
